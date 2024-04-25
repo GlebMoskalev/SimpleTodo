@@ -8,7 +8,7 @@
 import UIKit
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    var todos: [TodoItem] = [TodoItem(name: "Test todo item")]
+    var todos: [TodoItem] = [TodoItem]()
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -24,8 +24,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         constraintTableView()
         configureTableView()
         
+        navigationItem.title = "Todo List"
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(openAlert))
+        
+        if let encodedData = UserDefaults.standard.array(forKey: "Todos") as? [Data]{
+            todos = encodedData.compactMap({ try? JSONDecoder().decode(TodoItem.self, from: $0)})
+            print(todos)
+            
+    
+        }
     }
+    
     @objc func openAlert(){
         let alert = UIAlertController(title: "Create Todo", message: "", preferredStyle: .alert)
         alert.addTextField()
@@ -47,6 +56,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     private func addTodo(name: String){
         todos.append(TodoItem(name: name))
         tableView.reloadData()
+        let data = todos.map({ try? JSONEncoder().encode($0)})
+        UserDefaults.standard.set(data, forKey: "Todos")
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete{
+            todos.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            let data = todos.map({ try? JSONEncoder().encode($0)})
+            UserDefaults.standard.set(data, forKey: "Todos")
+        }
     }
     
     // MARK: - Setup Table View Methods
@@ -78,7 +98,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         let checkMarkButton = UIButton(type: .custom)
         checkMarkButton.tag = indexPath.row
-        checkMarkButton.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        checkMarkButton.frame = CGRect(x: 0, y: 0, width: cell.contentView.bounds.height, height: cell.contentView.bounds.height)
         checkMarkButton.setImage(UIImage(systemName: "square"), for: .normal)
         checkMarkButton.addTarget(self, action: #selector(touchCheckMark(sender:)), for: .touchUpInside)
         cell.accessoryView = checkMarkButton

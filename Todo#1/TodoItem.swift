@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TodoItem{
+struct TodoItem: Codable {
     var name: String
     var isCompleted = false
     var id: UUID = UUID()

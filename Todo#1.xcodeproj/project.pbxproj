@@ -13,6 +13,7 @@
 		044F44322BD7B93100E5A3E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 044F44312BD7B93100E5A3E0 /* Assets.xcassets */; };
 		044F44352BD7B93100E5A3E0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 044F44332BD7B93100E5A3E0 /* LaunchScreen.storyboard */; };
 		044F443D2BD7BAED00E5A3E0 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044F443C2BD7BAED00E5A3E0 /* TodoItem.swift */; };
+		04E039E02BDA6D1A00B187E1 /* TodoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E039DF2BDA6D1A00B187E1 /* TodoModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		044F44342BD7B93100E5A3E0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		044F44362BD7B93100E5A3E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		044F443C2BD7BAED00E5A3E0 /* TodoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItem.swift; sourceTree = "<group>"; };
+		04E039DF2BDA6D1A00B187E1 /* TodoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				044F44332BD7B93100E5A3E0 /* LaunchScreen.storyboard */,
 				044F44362BD7B93100E5A3E0 /* Info.plist */,
 				044F443C2BD7BAED00E5A3E0 /* TodoItem.swift */,
+				04E039DF2BDA6D1A00B187E1 /* TodoModel.swift */,
 			);
 			path = "Todo#1";
 			sourceTree = "<group>";
@@ -140,6 +143,7 @@
 				044F442D2BD7B93000E5A3E0 /* ViewController.swift in Sources */,
 				044F44292BD7B93000E5A3E0 /* AppDelegate.swift in Sources */,
 				044F443D2BD7BAED00E5A3E0 /* TodoItem.swift in Sources */,
+				04E039E02BDA6D1A00B187E1 /* TodoModel.swift in Sources */,
 				044F442B2BD7B93000E5A3E0 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
