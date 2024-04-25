@@ -8,7 +8,8 @@
 import UIKit
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    var todos: [TodoItem] = [TodoItem]()
+    
+    lazy var todoModel = TodoModel.shared
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -27,12 +28,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         navigationItem.title = "Todo List"
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(openAlert))
         
-        if let encodedData = UserDefaults.standard.array(forKey: "Todos") as? [Data]{
-            todos = encodedData.compactMap({ try? JSONDecoder().decode(TodoItem.self, from: $0)})
-            print(todos)
-            
-    
-        }
+        todoModel.loadTodos()
     }
     
     @objc func openAlert(){
@@ -44,7 +40,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         let saveButton = UIAlertAction(title: "Save", style: .default) {_ in
             if let textName = alert.textFields?.first?.text{
-                self.addTodo(name: textName)
+                self.todoModel.addTodo(todoName: textName)
+                self.reloadTableView()
             }
         }
         alert.addAction(saveButton)
@@ -52,20 +49,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         present(alert, animated: true)
     }
     
-    // MARK: - Table View Methods
-    private func addTodo(name: String){
-        todos.append(TodoItem(name: name))
-        tableView.reloadData()
-        let data = todos.map({ try? JSONEncoder().encode($0)})
-        UserDefaults.standard.set(data, forKey: "Todos")
-    }
-    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete{
-            todos.remove(at: indexPath.row)
+            todoModel.deleteTodo(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
-            let data = todos.map({ try? JSONEncoder().encode($0)})
-            UserDefaults.standard.set(data, forKey: "Todos")
+            reloadTableView()
         }
     }
     
@@ -74,7 +62,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "todoCell")
-//        tableView.allowsSelection = false
     }
     
     private func constraintTableView(){
@@ -87,31 +74,32 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     // MARK: - Table View Methods
+    private func reloadTableView() {
+            tableView.reloadData()
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return todos.count
+        return todoModel.getAllTodos().count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "todoCell")
-        let todoItem = todos[indexPath.row]
+        let todoItem = todoModel.getTodo(at: indexPath.row)
         cell.textLabel?.text = todoItem.name
         
+        let imageName = todoItem.isCompleted ? "checkmark.square" : "square"
         let checkMarkButton = UIButton(type: .custom)
         checkMarkButton.tag = indexPath.row
         checkMarkButton.frame = CGRect(x: 0, y: 0, width: cell.contentView.bounds.height, height: cell.contentView.bounds.height)
-        checkMarkButton.setImage(UIImage(systemName: "square"), for: .normal)
+        checkMarkButton.setImage(UIImage(systemName: imageName), for: .normal)
         checkMarkButton.addTarget(self, action: #selector(touchCheckMark(sender:)), for: .touchUpInside)
         cell.accessoryView = checkMarkButton
         return cell
     }
     
     @objc func touchCheckMark(sender: UIButton){
-        todos[sender.tag].isCompleted.toggle()
-        if todos[sender.tag].isCompleted{
-            sender.setImage(UIImage(systemName: "checkmark.square"), for: .normal)
-        } else {
-            sender.setImage(UIImage(systemName: "square"), for: .normal)
-        }
+        todoModel.toogleTodoCompletion(at: sender.tag)
+        sender.setImage(UIImage(systemName: todoModel.getTodo(at: sender.tag).isCompleted ? "checkmark.square" : "square"), for: .normal)
     }
 }
 
